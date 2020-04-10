@@ -4,6 +4,9 @@ output:
   html_document:
     keep_md: true
 ---
+```{r global_options}
+knitr::opts_chunk$set(fig.path='Figs/')
+```
 
 
 ## Loading and preprocessing the data
@@ -109,7 +112,7 @@ for (i in 1:nrow(impute_activity)){
 ```{r echo=FALSE,results='asis'}
 imp_g
 
-kable(summary_impute_act)
+kable(summary_impute_act,format = "markdown")
 ```
 
 
