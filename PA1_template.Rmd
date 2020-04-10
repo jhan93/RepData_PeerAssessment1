@@ -19,9 +19,8 @@ library(knitr)
 ```{r mean_totes, results='asis'}
 hist_act <- activity %>% group_by(date) %>% summarize(Daily_Steps = sum(steps, na.rm = TRUE))
 hist_act$date <- as.Date(hist_act$date, format = '%Y-%m-%d')
-g <- ggplot(hist_act, aes(x=date, y = Daily_Steps)) +geom_bar(stat = 'identity')
-
-summary_act <- activity %>% group_by(date) %>% summarize(mean_steps = mean(steps, na.rm = TRUE), median_steps = median(steps, na.rm = TRUE))
+g <- ggplot(hist_act, aes(x = Daily_Steps)) +geom_histogram(bins = 10)
+summary_act <- hist_act %>% summarize(mean_steps = mean(Daily_Steps, na.rm = TRUE), median_steps = median(Daily_Steps, na.rm = TRUE))
 ```
 
 1. Calculate the total number of steps taken per day
@@ -52,9 +51,9 @@ daily <- ggplot(int_act, aes(x=interval, y = Avg_Daily_Pattern)) + geom_line()
 daily
 ```
 
-2. 5-min interval, on average across all days in the data, contains the maximum number of steps?\hfill\break
+2. 5-min interval, on average across all days in the data, contains the maximum number of steps?
+\hfill\break
 ```{r echo=FALSE,results='asis'}
-
 int_act[which(int_act$Avg_Daily_Pattern == max(int_act$Avg_Daily_Pattern)),]$interval
 ```
 
@@ -75,18 +74,20 @@ for (i in 1:nrow(impute_activity)){
 
 impute_activity_hist <- impute_activity %>% group_by(date) %>% summarize(Daily_Steps = sum(steps, na.rm = TRUE))
 impute_activity_hist$date <- as.Date(impute_activity_hist$date, format = '%Y-%m-%d')
-imp_g<-ggplot(impute_activity_hist, aes(x=date, y = Daily_Steps)) +geom_bar(stat = 'identity')
+imp_g<-ggplot(impute_activity_hist, aes(x=Daily_Steps)) +geom_histogram(bins = 15)
 
 summary_impute_act <- impute_activity %>% group_by(date) %>% summarize(mean_steps = mean(steps, na.rm = TRUE), median_steps = median(steps, na.rm = TRUE))
 
 ```
 
-1. Calculate the total number of missing values in the data set\hfill\break
+1. Calculate the total number of missing values in the data set
+\hfill\break
 ```{r echo=FALSE,results='asis'}
 total_missing
 ```
 
-2/3. Impute missing values in the data set. Create a new data set.\hfill\break
+2/3. Impute missing values in the data set. Create a new data set.
+\hfill\break
 ```{r results='asis'}
 impute_activity <- activity
 for (i in 1:nrow(impute_activity)){
@@ -101,7 +102,8 @@ for (i in 1:nrow(impute_activity)){
 ```
 
 
-4. Histogram of the total number of steps taken each day: I have found the values to differ from the first part of the assignment. The data is less skewed in my opinion.\hfill\break
+4. Histogram of the total number of steps taken each day: I have found the values to differ from the first part of the assignment. The data is less skewed in my opinion.
+\hfill\break
 
 
 ```{r echo=FALSE,results='asis'}
