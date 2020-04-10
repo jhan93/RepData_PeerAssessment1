@@ -7,19 +7,136 @@ output:
 
 
 ## Loading and preprocessing the data
-
-
+```{r read, message = F, warning = F}
+activity <- read.csv('activity.csv')
+library(ggplot2)
+library(dplyr)
+library(knitr)
+```
 
 ## What is mean total number of steps taken per day?
+
+```{r mean_totes, results='asis'}
+hist_act <- activity %>% group_by(date) %>% summarize(Daily_Steps = sum(steps, na.rm = TRUE))
+hist_act$date <- as.Date(hist_act$date, format = '%Y-%m-%d')
+g <- ggplot(hist_act, aes(x=date, y = Daily_Steps)) +geom_bar(stat = 'identity')
+
+summary_act <- activity %>% group_by(date) %>% summarize(mean_steps = mean(steps, na.rm = TRUE), median_steps = median(steps, na.rm = TRUE))
+```
+
+1. Calculate the total number of steps taken per day
+```{r echo = FALSE, results='asis'}
+kable(hist_act)
+```
+
+2. Histogram of the total number of steps taken each day
+```{r echo = FALSE, results='asis'}
+g
+```
+
+3. Calculate and report the mean and median of the total number of steps taken per day
+```{r echo = FALSE, results='asis'}
+kable(summary_act)
+```
 
 
 
 ## What is the average daily activity pattern?
+```{r avg_daily, results='asis'}
+int_act<-activity %>% group_by(interval) %>% summarize(Avg_Daily_Pattern = mean(steps, na.rm = TRUE))
+daily <- ggplot(int_act, aes(x=interval, y = Avg_Daily_Pattern)) + geom_line()
+```
 
+1. Time series plot of the 5-minute interval and avg number of steps taken across all days
+```{r echo=FALSE,results='asis'}
+daily
+```
+
+2. 5-min interval, on average across all days in the data, contains the maximum number of steps?\hfill\break
+```{r echo=FALSE,results='asis'}
+
+int_act[which(int_act$Avg_Daily_Pattern == max(int_act$Avg_Daily_Pattern)),]$interval
+```
 
 
 ## Imputing missing values
+```{r impute, results='asis'}
+total_missing <- sum(is.na(activity))
+impute_activity <- activity
+for (i in 1:nrow(impute_activity)){
+  
+  if (is.na(activity[i,]$steps)){
+    
+    impute_activity[i,]$steps <- int_act[which(int_act$interval == impute_activity[i,]$interval),]$Avg_Daily_Pattern
+    
+  }
+  
+}
+
+impute_activity_hist <- impute_activity %>% group_by(date) %>% summarize(Daily_Steps = sum(steps, na.rm = TRUE))
+impute_activity_hist$date <- as.Date(impute_activity_hist$date, format = '%Y-%m-%d')
+imp_g<-ggplot(impute_activity_hist, aes(x=date, y = Daily_Steps)) +geom_bar(stat = 'identity')
+
+summary_impute_act <- impute_activity %>% group_by(date) %>% summarize(mean_steps = mean(steps, na.rm = TRUE), median_steps = median(steps, na.rm = TRUE))
+
+```
+
+1. Calculate the total number of missing values in the data set\hfill\break
+```{r echo=FALSE,results='asis'}
+total_missing
+```
+
+2/3. Impute missing values in the data set. Create a new data set.\hfill\break
+```{r results='asis'}
+impute_activity <- activity
+for (i in 1:nrow(impute_activity)){
+  
+  if (is.na(activity[i,]$steps)){
+    
+    impute_activity[i,]$steps <- int_act[which(int_act$interval == impute_activity[i,]$interval),]$Avg_Daily_Pattern
+    
+  }
+  
+}
+```
+
+
+4. Histogram of the total number of steps taken each day: I have found the values to differ from the first part of the assignment. The data is less skewed in my opinion.\hfill\break
+
+
+```{r echo=FALSE,results='asis'}
+imp_g
+
+kable(summary_impute_act)
+```
+
 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r diff, results='asis'}
+
+impute_activity$day_type <- ifelse(weekdays(as.Date(impute_activity$date, format = '%Y-%m-%d')) == 'Saturday' | 
+                                     weekdays(as.Date(impute_activity$date, format = '%Y-%m-%d')) == 'Sunday', 'weekend', 'weekday')
+
+
+int_impute_act <- impute_activity %>% group_by(interval, day_type) %>% summarize(Avg_Daily_Pattern = mean(steps, na.rm = TRUE))
+
+
+wk_act <- ggplot(int_impute_act, aes(x=interval, y = Avg_Daily_Pattern)) + geom_line() + facet_grid(as.factor(int_impute_act$day_type))
+```
+
+
+1. New factor variable with two levels for weekday and weekend
+```{r results='asis'}
+
+impute_activity$day_type <- ifelse(weekdays(as.Date(impute_activity$date, format = '%Y-%m-%d')) == 'Saturday' | 
+                                     weekdays(as.Date(impute_activity$date, format = '%Y-%m-%d')) == 'Sunday', 'weekend', 'weekday')
+
+```
+
+2. Panel plot of the 5 minute interval (x-axis)
+```{r echo=FALSE,results='asis'}
+wk_act
+```
+
