@@ -25,7 +25,7 @@ summary_act <- hist_act %>% summarize(mean_steps = mean(Daily_Steps, na.rm = TRU
 
 1. Calculate the total number of steps taken per day
 ```{r echo = FALSE, results='asis'}
-kable(hist_act)
+kable(hist_act, format = "markdown")
 ```
 
 2. Histogram of the total number of steps taken each day
@@ -35,7 +35,7 @@ g
 
 3. Calculate and report the mean and median of the total number of steps taken per day
 ```{r echo = FALSE, results='asis'}
-kable(summary_act)
+kable(summary_act, format = "markdown")
 ```
 
 
