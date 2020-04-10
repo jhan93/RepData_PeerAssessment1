@@ -117,7 +117,7 @@ daily <- ggplot(int_act, aes(x=interval, y = Avg_Daily_Pattern)) + geom_line()
 ![](Figs/unnamed-chunk-4-1.png)<!-- -->
 
 2. 5-min interval, on average across all days in the data, contains the maximum number of steps?
-\hfill\break
+\
 [1] 835
 
 
@@ -144,11 +144,11 @@ summary_impute_act <- impute_activity %>% group_by(date) %>% summarize(mean_step
 ```
 
 1. Calculate the total number of missing values in the data set
-\hfill\break
+\
 [1] 2304
 
 2/3. Impute missing values in the data set. Create a new data set.
-\hfill\break
+\
 
 ```r
 impute_activity <- activity
@@ -164,8 +164,8 @@ for (i in 1:nrow(impute_activity)){
 ```
 
 
-4. Histogram of the total number of steps taken each day: I have found the values to differ from the first part of the assignment. The data is less skewed in my opinion.
-\hfill\break
+4. Histogram of the total number of steps taken each day:\ I have found the values to differ from the first part of the assignment. The data is less skewed in my opinion.\
+
 
 
 ![](Figs/unnamed-chunk-8-1.png)<!-- -->
